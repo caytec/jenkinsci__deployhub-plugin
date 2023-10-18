@@ -16,6 +16,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 // for XML parsing
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -99,6 +100,13 @@ public abstract class Common implements Action, ModelObjectWithContextMenu {
 
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+			try {
+				dbFactory.setFeature(FEATURE,true);
+			} catch (ParserConfigurationException e) {
+				throw new IllegalStateException("ParserConfigurationException was thrown. The feature '"
+						+ FEATURE + "' is not supported by your XML processor.",e);
+			}
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			File configFile = new File(jobsDir+"/"+directories[i], "config.xml");
 			if (!configFile.exists()) continue;
